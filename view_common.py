@@ -173,11 +173,12 @@ def seleciona_pessoa(entidade: BaseModel, label: str, index=0):
 
 def seleciona_aluno_disc(disciplina: Disciplina, label: str, index=0):
     alunos = Aluno.select().join(AlunoDisc).join(Disciplina).where(AlunoDisc.cod_disciplina==disciplina.cod_disciplina)
-    if alunos is None:
-        st.write('_Não há nada por aqui..._')
-        st.stop()
     
     aluno: Aluno = st.selectbox(label, alunos, index=index, format_func=Aluno.toString)
+
+    if aluno is None:
+        st.write('_Não há nada por aqui..._')
+        st.stop()
 
     alunoDisc = AlunoDisc.get_by_id([aluno.rga_aluno, disciplina.cod_disciplina])
 
@@ -186,11 +187,11 @@ def seleciona_aluno_disc(disciplina: Disciplina, label: str, index=0):
 def seleciona_disc_prof(professor: Professor, label: str):
     disciplinas = Disciplina.select(Disciplina).join(Professor).where(Professor.pessoa==professor.pessoa)
 
-    if disciplinas is None:
+    disciplina: Disciplina = st.selectbox(label, disciplinas, format_func=Disciplina.toString)
+
+    if disciplina is None:
         st.write('_Não há nada por aqui..._')
         st.stop()
-
-    disciplina: Disciplina = st.selectbox(label, disciplinas, format_func=Disciplina.toString)
 
     return disciplina
 

@@ -162,16 +162,26 @@ def matricular_aluno():
         st.write('_Não há nada por aqui..._')
         st.stop()
 
-    disciplina = seleciona_entidade(Disciplina, Disciplina.nome, 'Disciplina')
+    disciplinas_aluno = (Disciplina.select(Disciplina.cod_disciplina)
+    .join(AlunoDisc)
+    .where(AlunoDisc.rga_aluno==aluno.pessoa))
+
+    disciplinas_matricula = (Disciplina.select()
+    .where(Disciplina.cod_disciplina.not_in(disciplinas_aluno)))
+
+    disciplina = st.selectbox('Disciplina', disciplinas_matricula, format_func=Disciplina.toString)
+
+    if disciplinas_aluno is None:
+        st.write('_Não há nada por aqui..._')
+        st.stop()
 
     if disciplina is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('O aluno já está matriculado em todas as disciplinas.')
         st.stop()
 
     matricular = st.button('Matricular')
 
     if matricular:
-        valida_aluno_disc(aluno,disciplina)
         aluno_disc = AlunoDisc(rga_aluno=aluno.pessoa,cod_disciplina=disciplina.cod_disciplina,nota1=0.0,nota2=0.0,nota3=0.0,frequencia=0.0)
         
         try:
@@ -201,7 +211,7 @@ def visualizar_disciplinas():
     .dicts())
 
     if len(aluno_discs) == 0:
-        st.write('_Não há nada por aqui..._')
+        st.warning('O aluno não está matriculado em nenhuma disciplina')
         st.stop()
 
     df = pd.DataFrame(aluno_discs).set_index('cod_disciplina')
@@ -210,22 +220,25 @@ def visualizar_disciplinas():
 def desmatricular_aluno():
     st.title('Desmatricular aluno')
 
-    aluno = seleciona_pessoa(Aluno,'Aluno')
+    aluno: Aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
         st.write('_Não há nada por aqui..._')
         st.stop()
 
-    disciplinas_aluno = Disciplina.select(Disciplina.cod_disciplina, Disciplina.nome).join(AlunoDisc).join(Aluno).where(Aluno.pessoa==aluno.pessoa)
+    disciplinas_aluno = (Disciplina.select(Disciplina.cod_disciplina, 
+    Disciplina.nome)
+    .join(AlunoDisc)
+    .where(AlunoDisc.rga_aluno==aluno.pessoa))
 
-    disciplina = st.selectbox('Disciplinas', disciplinas_aluno, format_func=Disciplina.toString)
+    disciplina: Disciplina = st.selectbox('Disciplinas', disciplinas_aluno, format_func=Disciplina.toString)
 
-    if disciplinas_aluno is None:
-        st.write('_Não há nada por aqui..._')
+    if disciplina is None:
+        st.warning('O aluno não está matriculado em nenhuma disciplina')
         st.stop()
 
     desmatricular = st.button('Desmatricular')
 
     if desmatricular:
-        AlunoDisc.delete_by_id((aluno.pessoa.rga,disciplina.cod_disciplina))
+        AlunoDisc.delete_by_id([aluno.pessoa, disciplina.cod_disciplina])
         st.success('Aluno desmatriculado')

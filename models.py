@@ -84,7 +84,7 @@ class AlunoDisc(BaseModel):
     frequencia = DecimalField()
 
     class Meta:
-        primary_key = CompositeKey('rga_aluno', 'cod_disciplina')
+        primary_key = CompositeKey('aluno', 'disciplina')
 
 def create_tables(override = True):
     if override:
