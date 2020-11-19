@@ -192,13 +192,19 @@ def visualizar_disciplinas():
         st.write('_Não há nada por aqui..._')
         st.stop()        
 
-    disciplinas_aluno = list(Aluno.select(Disciplina.cod_disciplina, Disciplina.nome, Pessoa.rga.alias('rga do professor'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do professor')).join(AlunoDisc).join(Disciplina).join(Professor).join(Pessoa).where(Aluno.pessoa==aluno.pessoa).dicts())
+    aluno_discs = list(Aluno.select(
+    Disciplina.cod_disciplina, Disciplina.nome,
+    AlunoDisc.nota1, AlunoDisc.nota2, AlunoDisc.nota3, AlunoDisc.frequencia)
+    .join(AlunoDisc, on=(Aluno.pessoa==AlunoDisc.aluno))
+    .join(Disciplina, on=(AlunoDisc.cod_disciplina==Disciplina.cod_disciplina))
+    .where(Aluno.pessoa==aluno.pessoa)
+    .dicts())
 
-    if len(disciplinas_aluno) == 0:
+    if len(aluno_discs) == 0:
         st.write('_Não há nada por aqui..._')
         st.stop()
 
-    df = pd.DataFrame(disciplinas_aluno).set_index('cod_disciplina')
+    df = pd.DataFrame(aluno_discs).set_index('cod_disciplina')
     st.table(df)
 
 def desmatricular_aluno():

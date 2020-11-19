@@ -70,11 +70,11 @@ class Disciplina(BaseModel):
         return f'{disciplina.nome} | {disciplina.cod_disciplina}'
 
 class AlunoDisc(BaseModel):
-    rga_aluno = ForeignKeyField(Aluno,
+    aluno = ForeignKeyField(Aluno,
     backref='turmas', db_column='rga_aluno',
     on_delete='cascade', on_update='cascade')
 
-    cod_disciplina = ForeignKeyField(Disciplina, null=False,
+    disciplina = ForeignKeyField(Disciplina, null=False,
     backref='alunos', db_column='cod_disciplina',
     on_delete='cascade', on_update='cascade')
 
