@@ -137,7 +137,6 @@ def remover_aluno():
     remover = st.button('Remover')
 
     if remover:
-
         Pessoa.delete_by_id(aluno.pessoa)
 
         st.success('Aluno removido com sucesso!')        

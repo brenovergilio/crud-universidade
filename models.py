@@ -40,7 +40,7 @@ class Curso(BaseModel):
     cod_curso = CharField(4, primary_key=True)
     rga_coord = ForeignKeyField(Professor, backref='coordena', 
     unique=True, db_column='rga_coord',
-    on_delete='cascade', on_update='cascade')
+    on_delete='CASCADE', on_update='CASCADE')
 
     nome = CharField(40)
 
@@ -48,12 +48,13 @@ class Curso(BaseModel):
         return f'{curso.nome} | {curso.cod_curso}'
 
 class Aluno(BaseModel):
-    pessoa = ForeignKeyField(Pessoa, primary_key=True,
-    backref='alunos', db_column='rga_aluno',
-    on_delete='cascade',on_update='cascade')
+    pessoa = ForeignKeyField(Pessoa, backref='alunos', 
+    primary_key=True, db_column='rga_aluno',
+    on_delete='CASCADE', on_update='CASCADE')
 
     cod_curso = ForeignKeyField(Curso, backref='alunos', 
-    db_column='cod_curso',on_delete='cascade',on_update='cascade')
+    db_column='cod_curso',
+    on_delete='CASCADE',on_update='CASCADE')
 
     cr = DecimalField(null=True)
 
@@ -64,7 +65,9 @@ class Disciplina(BaseModel):
     cod_disciplina = CharField(8, primary_key=True)
     nome = CharField(80, null=True)
     carga_horaria = IntegerField()
-    rga_prof = ForeignKeyField(Professor, backref='disciplinas',db_column='rga_prof')
+    rga_prof = ForeignKeyField(Professor, 
+    backref='disciplinas',db_column='rga_prof',
+    on_delete='CASCADE',on_update='CASCADE')
 
     def toString(disciplina):
         return f'{disciplina.nome} | {disciplina.cod_disciplina}'
@@ -72,11 +75,11 @@ class Disciplina(BaseModel):
 class AlunoDisc(BaseModel):
     aluno = ForeignKeyField(Aluno,
     backref='turmas', db_column='rga_aluno',
-    on_delete='cascade', on_update='cascade')
+    on_delete='CASCADE', on_update='CASCADE')
 
     disciplina = ForeignKeyField(Disciplina, null=False,
     backref='alunos', db_column='cod_disciplina',
-    on_delete='cascade', on_update='cascade')
+    on_delete='CASCADE', on_update='CASCADE')
 
     nota1 = DecimalField()
     nota2 = DecimalField()
