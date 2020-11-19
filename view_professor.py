@@ -140,44 +140,43 @@ def gerenciar_disciplinas_professor():
 def lancar_notas():
     st.title('Lançar notas')
 
-    professores = Professor.select()
+    professor: Professor = seleciona_pessoa(Professor, 'Selecione o professor')
 
-    if professores is None:
-        st.write('_Não há nada por aqui..._')
-        st.stop()
+    disciplina: Disciplina = seleciona_disc_prof(professor, 'Selecione a disciplina')
 
-    professor = st.selectbox('Selecione o professor', professores, format_func=Professor.toString)
+    aluno_disc: AlunoDisc = seleciona_aluno_disc(disciplina, 'Selecione o aluno')
 
-    disciplinas = Disciplina.select(Disciplina).join(Professor).where(Professor.pessoa==professor.pessoa)
-
-    if disciplinas is None:
-        st.write('_Não há nada por aqui..._')
-        st.stop()
-
-    disciplina = st.selectbox('Selecione a disciplina', disciplinas, format_func=Disciplina.toString)
-
-    alunos = Aluno.select(Aluno).join(AlunoDisc).join(Disciplina).where(Aluno.rga_aluno==AlunoDisc.rga_aluno and AlunoDisc.cod_disciplina==disciplina.cod_disciplina)
-
-    if alunos is None:
-        st.write('_Não há nada por aqui..._')
-        st.stop()
-
-    aluno = st.selectbox('Selecione o aluno', alunos, format_func=Aluno.toString)
-    
-    alunoDisc = list(AlunoDisc.select(AlunoDisc).join(Aluno).where(aluno.pessoa.rga==AlunoDisc.rga_aluno and disciplina.cod_disciplina==AlunoDisc.cod_disciplina).dicts())
-    print(AlunoDisc.select(AlunoDisc).join(Aluno).where(disciplina.cod_disciplina==AlunoDisc.cod_disciplina and aluno.pessoa.rga==AlunoDisc.rga_aluno))
-    for i in range(0,len(alunoDisc)):
-        print(alunoDisc[i]['rga_aluno']+alunoDisc[i]['cod_disciplina']+" "+str(i))
     col1,col2,col3 = st.beta_columns(3)
-    nota1 = col1.number_input(label='Primeira nota',min_value=0.0,max_value=10.0,value=float(alunoDisc[0]['nota1']),step=0.5)
-    nota2 = col2.number_input(label='Segunda nota',min_value=0.0,max_value=10.0,value=float(alunoDisc[0]['nota2']),step=0.5)
-    nota3 = col3.number_input(label='Terceira nota',min_value=0.0,max_value=10.0,value=float(alunoDisc[0]['nota3']),step=0.5)
+
+    nota1 = col1.number_input(label='Primeira nota',min_value=0.0,max_value=10.0,value=float(aluno_disc.nota1),step=0.5)
+    
+    nota2 = col2.number_input(label='Segunda nota',min_value=0.0,max_value=10.0,value=float(aluno_disc.nota2),step=0.5)
+    
+    nota3 = col3.number_input(label='Terceira nota',min_value=0.0,max_value=10.0,value=float(aluno_disc.nota3),step=0.5)
 
     lancar = st.button('Lançar')
 
     if lancar:
-        AlunoDisc.update({AlunoDisc.nota1: nota1, AlunoDisc.nota2: nota2, AlunoDisc.nota3: nota3}).where(AlunoDisc.rga_aluno==alunoDisc[0]['rga_aluno'] and AlunoDisc.cod_disciplina==alunoDisc[0]['cod_disciplina']).execute()
+        aluno_disc.nota1 = nota1
+        aluno_disc.nota2 = nota2
+        aluno_disc.nota3 = nota3
+        aluno_disc.save()
         st.success('Notas lançadas')
 
 def lancar_presenca():
     st.title('Lançar presenças')
+
+    professor: Professor = seleciona_pessoa(Professor, 'Selecione o professor')
+
+    disciplina: Disciplina = seleciona_disc_prof(professor, 'Selecione a disciplina')
+
+    aluno_disc: AlunoDisc = seleciona_aluno_disc(disciplina, 'Selecione o aluno')
+
+    frequencia = st.number_input('Horas de presença', min_value=0, max_value=disciplina.carga_horaria, value=int(aluno_disc.frequencia), step=2)
+
+    lancar = st.button('Lançar')
+
+    if lancar:
+        aluno_disc.frequencia = frequencia
+        aluno_disc.save()
+        st.success('Frequência lançada')
