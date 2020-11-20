@@ -1,4 +1,5 @@
 from peewee import *
+from datetime import date
 from os import remove
 from os.path import isfile
 
@@ -57,7 +58,7 @@ class Aluno(BaseModel):
     db_column='cod_curso',
     on_delete='CASCADE',on_update='CASCADE')
 
-    cr = DecimalField(null=True)
+    cr = DecimalField(null=True, default=0)
 
     def toString(aluno):
         return f'{aluno.pessoa.pnome} {aluno.pessoa.unome} | {aluno.pessoa}'
@@ -90,10 +91,52 @@ class AlunoDisc(BaseModel):
     class Meta:
         primary_key = CompositeKey('aluno', 'disciplina')
 
+class Log(BaseModel):
+    dataOperacao = DateField(default=date.today())
+    tipo = CharField(constraints=[Check('tipo in ("U", "D")')])
 
-#Tabelas de log
-class PessoaLog(BaseModel):
+    class Meta:
+        primary_key = False
+
+class PessoaLog(Log):
+    rga_old = CharField()
+    cpf_old = CharField()
+
+    rga_new = CharField()
+    cpf_new = CharField()
+
+class ProfessorLog(Log):
+    rga_old = CharField()
+
+    rga_new = CharField()
+
+class AlunoLog(Log):
+    rga_old = CharField()
+    curso_old = CharField()
+
+    rga_new = CharField()
+    curso_new = CharField()
+
+class DisciplinaLog(Log):
+    cod_disciplina_old = CharField()
+    professor_old = CharField()
+
+    cod_disciplina_new = CharField()
+    professor_new= CharField()
+
+class CursoLog(Log):
+    cod_curso_old = CharField()
+    coordenador_old = CharField()
+
+    cod_curso_new = CharField()
+    coordenador_new = CharField()
+
+class AlunoDiscLog(Log):
+    aluno_old = CharField()
+    disciplina_old = CharField()
     
+    aluno_new = CharField()
+    disciplina_new = CharField()
 
 def create_tables(override = True):
     if override:
@@ -101,8 +144,11 @@ def create_tables(override = True):
             remove('universidade.db')
 
     with db:
-        db.create_tables([Pessoa, Aluno, Professor, 
-        Curso, Disciplina, AlunoDisc])
+        db.create_tables([
+        Pessoa, Aluno, Professor, 
+        Curso, Disciplina, AlunoDisc, 
+        PessoaLog, AlunoLog, ProfessorLog,
+        CursoLog, DisciplinaLog, AlunoDiscLog])
 
 if __name__ == '__main__':
     create_tables()
