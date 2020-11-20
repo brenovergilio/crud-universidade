@@ -5,11 +5,13 @@ DECLARE
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         tipo:='U';
+		INSERT INTO pessoalog VALUES (LOCALTIMESTAMP,tipo,OLD.rga,OLD.cpf,NEW.rga,NEW.cpf);
+    	RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
         tipo:='D';
+		INSERT INTO pessoalog VALUES (LOCALTIMESTAMP,tipo,OLD.rga,OLD.cpf,NEW.rga,NEW.cpf);
+    	RETURN OLD;
     END IF;
-    INSERT INTO pessoalog VALUES (LOCALTIMESTAMP,tipo,OLD.rga,OLD.cpf,NEW.rga,NEW.cpf);
-    RETURN NEW;              
 END;
 $$ LANGUAGE PLPGSQL;
 
@@ -22,11 +24,13 @@ DECLARE
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         tipo:='U';
+		INSERT INTO professorlog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_prof,NEW.rga_prof);
+		RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
         tipo:='D';
+		INSERT INTO professorlog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_prof,NEW.rga_prof);
+    	RETURN OLD;
     END IF;
-    INSERT INTO professorlog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_prof,NEW.rga_prof);
-    RETURN NEW;                
 END;
 $$ LANGUAGE PLPGSQL;
 
@@ -39,11 +43,13 @@ DECLARE
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         tipo:='U';
+		INSERT INTO alunolog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_curso,NEW.rga_aluno,NEW.cod_curso);
+		RETURN NEW;  
     ELSIF TG_OP = 'DELETE' THEN
         tipo:='D';
-    END IF;
-    INSERT INTO alunolog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_curso,NEW.rga_aluno,NEW.cod_curso);
-    RETURN NEW;            
+		INSERT INTO alunolog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_curso,NEW.rga_aluno,NEW.cod_curso);
+		RETURN OLD;  
+    END IF;         
 END;
 $$ LANGUAGE PLPGSQL;
 
@@ -56,11 +62,13 @@ DECLARE
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         tipo:='U';
+		INSERT INTO disciplinalog VALUES (LOCALTIMESTAMP,tipo,OLD.cod_disciplina,OLD.rga_prof,NEW.cod_disciplina,NEW.rga_prof);
+		RETURN NEW; 
     ELSIF TG_OP = 'DELETE' THEN
         tipo:='D';
+		INSERT INTO disciplinalog VALUES (LOCALTIMESTAMP,tipo,OLD.cod_disciplina,OLD.rga_prof,NEW.cod_disciplina,NEW.rga_prof);
+		RETURN OLD; 
     END IF;
-    INSERT INTO disciplinalog VALUES (LOCALTIMESTAMP,tipo,OLD.cod_disciplina,OLD.rga_prof,NEW.cod_disciplina,NEW.rga_prof);
-    RETURN NEW;            
 END;
 $$ LANGUAGE PLPGSQL;
 
@@ -73,11 +81,13 @@ DECLARE
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         tipo:='U';
+		INSERT INTO cursolog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_coord,OLD.cod_curso,NEW.rga_coord,NEW.cod_curso);
+		RETURN NEW;   
     ELSIF TG_OP = 'DELETE' THEN
         tipo:='D';
-    END IF;
-    INSERT INTO cursolog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_coord,OLD.cod_curso,NEW.rga_coord,NEW.cod_curso);
-    RETURN NEW;            
+		INSERT INTO cursolog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_coord,OLD.cod_curso,NEW.rga_coord,NEW.cod_curso);
+		RETURN OLD;   
+    END IF;          
 END;
 $$ LANGUAGE PLPGSQL;
 
@@ -90,11 +100,13 @@ DECLARE
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         tipo:='U';
+		INSERT INTO alunodisclog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_disciplina,NEW.rga_aluno,NEW.cod_disciplina);
+		RETURN NEW; 
     ELSIF TG_OP = 'DELETE' THEN
-        tipo:='D';
-    END IF;
-    INSERT INTO alunodisclog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_disciplina,NEW.rga_aluno,NEW.cod_disciplina);
-    RETURN NEW;            
+			tipo:='D';
+		INSERT INTO alunodisclog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_disciplina,NEW.rga_aluno,NEW.cod_disciplina);
+		RETURN OLD; 
+    END IF;           
 END;
 $$ LANGUAGE PLPGSQL;
 

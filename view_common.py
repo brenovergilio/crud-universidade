@@ -25,8 +25,12 @@ def pega_dados_pessoa(pnome = '', unome='', cpf='', datanasc=None, sexo=None):
     return pnome, unome, cpf, datanasc, sexo
 
 def pega_dados_prof(titulo='', salario=0.0):
-    titulo = st.selectbox('Título', ["Graduado","Pós-Graduado","Mestrado", "Doutorado","Pós-Doutorado"])
-    salario = st.number_input('Salário', min_value=0.0, value=8000.0, step=250.0)
+    titulos = ["Graduado","Pós-Graduado","Mestrado", "Doutorado","Pós-Doutorado"]
+    if titulo != '':
+        index = titulos.index(titulo)
+    
+    titulo = st.selectbox('Título', titulos, index)
+    salario = st.number_input('Salário', min_value=0.0, value=float(salario), step=250.0)
 
     return titulo, salario  
 

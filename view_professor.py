@@ -65,6 +65,45 @@ def visualizar_professor():
 
     st.table(df)
 
+def alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salario, rga, prof):
+    valida_nome(pnome, unome, )
+    valida_tamanho(cpf, 11, message='CPF deve ter 11 dígitos')
+    cpfs = Pessoa.select(Pessoa.cpf).where(Pessoa.cpf != prof.pessoa.cpf)
+    cpfs = [p.cpf for p in cpfs]
+    if cpf in cpfs:
+        st.warning('Esse CPF já existe no banco de dados.')
+        st.stop()
+
+    pessoa = Pessoa.get_by_id(prof.pessoa)
+
+    dados = {
+        Pessoa.rga : rga,
+        Pessoa.pnome : pnome,
+        Pessoa.unome : unome,
+        Pessoa.cpf : cpf,
+        Pessoa.datanasc : datanasc,
+        Pessoa.sexo : sexo
+    }
+
+    try:
+        q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)
+        q.execute()
+    except Exception as e:
+        st.warning('Erro ao salvar. Verifique os dados inseridos')
+        st.write(e)
+        st.stop()
+
+    dados = {
+        Professor.titulo : titulo,
+        Professor.salario : salario
+    }
+    
+
+    q = Professor.update(dados).where(Professor.pessoa==pessoa.rga)
+    q.execute()
+
+    st.success('Registros alterados!')
+
 def alterar_professor():
     st.title('Alterar professor')
 
@@ -75,46 +114,22 @@ def alterar_professor():
         st.stop()
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(prof.pessoa.pnome, prof.pessoa.unome, prof.pessoa.cpf, prof.pessoa.datanasc, prof.pessoa.sexo)
-    st.write('Deseja gerar um novo rga?')
-    novo_rga = st.button('Gerar!')
-    if novo_rga:
-        global rga
-        rga=gera_rga()
-        st.success('Novo rga será: ' + str(rga))
+    rga = prof.pessoa
+
     titulo, salario = pega_dados_prof(prof.titulo, prof.salario)
-    alterar = st.button('Alterar')
+
+    col1, col2 = st.beta_columns(2)
+
+    novo_rga = col2.button('Alterar com novo RGA.')
+    alterar = col1.button('Alterar.')
+
+    if novo_rga:
+        rga = gera_rga()
+        st.success('Novo rga será: ' + str(rga))
+        alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salario, rga, prof)
 
     if alterar:
-        valida_nome(pnome, unome, )
-        valida_tamanho(cpf, 11, message='CPF deve ter 11 dígitos')
-
-        pessoa = Pessoa.get_by_id(prof.pessoa)
-        dados = {
-            Pessoa.rga : rga,
-            Pessoa.pnome : pnome,
-            Pessoa.unome : unome,
-            Pessoa.cpf : cpf,
-            Pessoa.datanasc : datanasc,
-            Pessoa.sexo : sexo
-        }
-        try:
-            q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)
-            q.execute()
-        except Exception as e:
-            st.warning('Erro ao salvar. Verifique os dados inseridos')
-            st.write(e)
-            st.stop()
-
-        dados={
-            Professor.titulo : titulo,
-            Professor.salario : salario
-        }
-        
-
-        q = Professor.update(dados).where(Professor.pessoa==pessoa.rga)
-        q.execute()
-
-        st.success('Registros alterados!')
+        alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salario, rga, prof)
 
 def remover_professor():
     prof = seleciona_pessoa(Professor,'Professor')
@@ -132,7 +147,9 @@ def remover_professor():
     remover = st.button('Remover')
 
     if remover:
-        Pessoa.delete_by_id(prof.pessoa)
+        q = Pessoa.delete().where(Pessoa.rga==prof.pessoa)
+        print(q)
+        q.execute()
 
         st.success('Professor removido com sucesso!')
 
