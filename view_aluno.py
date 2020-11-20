@@ -61,7 +61,7 @@ def visualizar_aluno():
     dados_alunos = list(Pessoa.select(Pessoa.rga, Pessoa.cpf, (Pessoa.pnome + " " + Pessoa.unome).alias('nome'), Curso.nome.alias('nome do curso')).join(Aluno).join(Curso).order_by(Pessoa.pnome).dicts())
 
     if len(dados_alunos) == 0:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()
 
     df = pd.DataFrame(dados_alunos).set_index('rga')
@@ -74,13 +74,13 @@ def alterar_aluno():
     aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()
 
     st.title('Dados do aluno')
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(aluno.pessoa.pnome, aluno.pessoa.unome, aluno.pessoa.cpf, aluno.pessoa.datanasc, aluno.pessoa.sexo)
-    #gambiarra -> reescrever quando der tempo
+    
     curso_atual = aluno.select().join(Curso)
     cursos = Curso.select().order_by(Curso.cod_curso)
     index = -1
@@ -88,7 +88,7 @@ def alterar_aluno():
         index += 1
         if c == curso_atual:
             break
-    #fim da gambiarra
+   
     curso = st.selectbox('Curso', cursos, format_func=Curso.toString, index=index)
 
     alterar = st.button('Alterar')
@@ -125,7 +125,7 @@ def remover_aluno():
     aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()
 
     dados_alunos = list(Pessoa.select(Pessoa.rga, Pessoa.cpf, (Pessoa.pnome + " " + Pessoa.unome).alias('nome'), Curso.nome.alias('nome do curso')).join(Aluno).join(Curso).where(Pessoa.rga==aluno.pessoa).order_by(Pessoa.pnome).dicts())
@@ -158,7 +158,7 @@ def matricular_aluno():
     aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()
 
     disciplinas_aluno = (Disciplina.select(Disciplina.cod_disciplina)
@@ -171,7 +171,7 @@ def matricular_aluno():
     disciplina = st.selectbox('Disciplina', disciplinas_matricula, format_func=Disciplina.toString)
 
     if disciplinas_aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Todas as disciplinas estão vazias')
         st.stop()
 
     if disciplina is None:
@@ -198,7 +198,7 @@ def visualizar_disciplinas():
     aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()        
 
     aluno_discs = list(Aluno.select(
@@ -222,7 +222,7 @@ def desmatricular_aluno():
     aluno: Aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()
 
     disciplinas_aluno = (Disciplina.select(Disciplina.cod_disciplina, 

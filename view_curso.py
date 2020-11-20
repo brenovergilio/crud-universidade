@@ -22,7 +22,7 @@ def inserir_curso():
     cod_curso, prof_coord, nome = pega_dados_curso()
 
     if prof_coord is None:
-        st.write('_O curso deve ter um coordenador._')
+        st.warning('O curso deve ter um coordenador')
         st.stop()
 
     salvar = st.button('Salvar curso')
@@ -50,7 +50,7 @@ def visualizar_curso():
     cursos = list(Curso.select(Curso.cod_curso, Curso.nome, Pessoa.rga.alias('rga do coordenador'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do coordenador')).join(Pessoa,on=(Curso.rga_coord==Pessoa.rga)).order_by(Curso.cod_curso).dicts())
 
     if len(cursos) == 0:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem cursos cadastrados')
         st.stop()
 
     df = pd.DataFrame(cursos).set_index('cod_curso')
@@ -63,7 +63,7 @@ def alterar_curso():
     curso = seleciona_entidade(Curso, Curso.nome, 'Curso')
 
     if curso is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem cursos cadastrados')
         st.stop()
 
     cod_curso, prof_coord, nome = pega_dados_curso(cod_curso=curso.cod_curso,prof_coord=curso.rga_coord,nome=curso.nome)
@@ -94,7 +94,7 @@ def remover_curso():
     curso = seleciona_entidade(Curso, Curso.nome, 'Curso')
 
     if curso is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem cursos cadastrados')
         st.stop()
 
     cursos = list(Curso.select(Curso.cod_curso, Curso.nome, Pessoa.rga.alias('rga do coordenador'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do coordenador')).join(Pessoa,on=(Curso.rga_coord==Pessoa.rga)).where((Pessoa.rga==curso.rga_coord) and (Curso.cod_curso==curso.cod_curso)).order_by(Curso.cod_curso).dicts())

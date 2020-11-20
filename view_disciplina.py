@@ -22,7 +22,7 @@ def inserir_disciplina():
     cod_disciplina, nome, carga_horaria, rga_prof = pega_dados_disciplina()
 
     if rga_prof is None:
-        st.write('_O curso deve ter um coordenador._')
+        st.warning('A disciplina deve ter um professor')
         st.stop()
 
     salvar = st.button('Salvar disciplina')
@@ -51,7 +51,7 @@ def visualizar_disciplina():
     disciplinas = list(Disciplina.select(Disciplina.cod_disciplina, Disciplina.nome.alias('nome da disciplina'), Pessoa.rga.alias('rga do professor'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do professor')).join(Pessoa,on=(Disciplina.rga_prof==Pessoa.rga)).order_by(Disciplina.cod_disciplina).dicts())
 
     if len(disciplinas) == 0:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem disciplinas cadastradas')
         st.stop()
 
     df = pd.DataFrame(disciplinas).set_index('cod_disciplina')
@@ -65,7 +65,7 @@ def alterar_disciplina():
     disciplina: Disciplina = seleciona_entidade(Disciplina, Disciplina.nome, 'Disciplina')
 
     if disciplina is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem disciplinas cadastradas')
         st.stop()
 
     cod_disciplina, nome, carga_horaria, rga_prof = pega_dados_disciplina(cod_disciplina=disciplina.cod_disciplina,nome=disciplina.nome,carga_horaria=disciplina.carga_horaria,rga_prof=disciplina.rga_prof)
@@ -99,7 +99,7 @@ def remover_disciplina():
     disciplina = seleciona_entidade(Disciplina, Disciplina.nome, 'Disciplina')
    
     if disciplina is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem disciplinas cadastradas')
         st.stop()
 
     disciplinas = list(Disciplina.select(Disciplina.cod_disciplina, Disciplina.nome, Pessoa.rga.alias('rga do professor'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do professor')).join(Pessoa,on=(Disciplina.rga_prof==Pessoa.rga)).where((Pessoa.rga==disciplina.rga_prof) and (Disciplina.cod_disciplina==disciplina.cod_disciplina)).order_by(Disciplina.cod_disciplina).dicts())

@@ -14,6 +14,7 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+#Tabelas do BD
 class Pessoa(BaseModel):
     rga = CharField(12, primary_key=True)
     pnome = CharField(20)
@@ -88,6 +89,11 @@ class AlunoDisc(BaseModel):
 
     class Meta:
         primary_key = CompositeKey('aluno', 'disciplina')
+
+
+#Tabelas de log
+class PessoaLog(BaseModel):
+    
 
 def create_tables(override = True):
     if override:

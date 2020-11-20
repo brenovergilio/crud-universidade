@@ -58,7 +58,7 @@ def visualizar_professor():
     professores = list(Professor.select(Pessoa.rga, Pessoa.cpf, Pessoa.datanasc.alias('data de nascimento') ,(Pessoa.pnome + " " + Pessoa.unome).alias('nome'), Professor.titulo, Professor.salario).join(Pessoa).order_by(Pessoa.pnome).dicts())
 
     if len(professores) == 0:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem professores cadastrados')
         st.stop()
 
     df = pd.DataFrame(professores).set_index('rga')
@@ -71,7 +71,7 @@ def alterar_professor():
     prof = seleciona_pessoa(Professor,'Professor')
 
     if prof is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem professores cadastrados')
         st.stop()
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(prof.pessoa.pnome, prof.pessoa.unome, prof.pessoa.cpf, prof.pessoa.datanasc, prof.pessoa.sexo)
@@ -110,7 +110,7 @@ def remover_professor():
     prof = seleciona_pessoa(Professor,'Professor')
 
     if prof is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem professores cadastrados')
         st.stop()
 
     dados_prof = list(Professor.select(Pessoa.rga, Pessoa.cpf, Pessoa.datanasc.alias('data de nascimento'), Pessoa.sexo, (Pessoa.pnome+ " " + Pessoa.unome).alias('nome'), Professor.titulo, Professor.salario).join(Pessoa).where(Professor.pessoa == prof.pessoa).order_by(Pessoa.pnome).dicts())
@@ -141,9 +141,21 @@ def lancar_notas():
 
     professor: Professor = seleciona_pessoa(Professor, 'Selecione o professor')
 
+    if professor is None:
+        st.warning('Não existem professores cadastrados')
+        st.stop()
+
     disciplina: Disciplina = seleciona_disc_prof(professor, 'Selecione a disciplina')
 
+    if disciplina is None:
+        st.warning('Não existem disciplinas cadastradas')
+        st.stop()
+
     aluno_disc: AlunoDisc = seleciona_aluno_disc(disciplina, 'Selecione o aluno')
+
+    if aluno_disc is None:
+        st.warning('As disciplinas estão vazias')
+        st.stop()
 
     col1,col2,col3 = st.beta_columns(3)
 
@@ -167,9 +179,21 @@ def lancar_presenca():
 
     professor: Professor = seleciona_pessoa(Professor, 'Selecione o professor')
 
+    if professor is None:
+        st.warning('Não existem professores cadastrados')
+        st.stop()
+
     disciplina: Disciplina = seleciona_disc_prof(professor, 'Selecione a disciplina')
 
+    if disciplina is None:
+        st.warning('Não existem disciplinas cadastradas')
+        st.stop()
+
     aluno_disc: AlunoDisc = seleciona_aluno_disc(disciplina, 'Selecione o aluno')
+
+    if aluno_disc is None:
+        st.warning('As disciplinas estão vazias')
+        st.stop()
 
     frequencia = st.number_input('Horas de presença', min_value=0, max_value=disciplina.carga_horaria, value=int(aluno_disc.frequencia), step=2)
 

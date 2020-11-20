@@ -57,7 +57,7 @@ def pega_dados_disciplina(cod_disciplina='', nome='', carga_horaria=34, rga_prof
             if rga_prof == prof.pessoa:
                 break
 
-    rga_prof = seleciona_pessoa(Professor,'Coordenador', index)
+    rga_prof = seleciona_pessoa(Professor,'Professor', index)
 
     return cod_disciplina, nome, carga_horaria, rga_prof
 
@@ -177,7 +177,7 @@ def seleciona_aluno_disc(disciplina: Disciplina, label: str, index=0):
     aluno: Aluno = st.selectbox(label, alunos, index=index, format_func=Aluno.toString)
 
     if aluno is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem alunos cadastrados')
         st.stop()
 
     alunoDisc = AlunoDisc.get_by_id([aluno.rga_aluno, disciplina.cod_disciplina])
@@ -190,7 +190,7 @@ def seleciona_disc_prof(professor: Professor, label: str):
     disciplina: Disciplina = st.selectbox(label, disciplinas, format_func=Disciplina.toString)
 
     if disciplina is None:
-        st.write('_Não há nada por aqui..._')
+        st.warning('Não existem disciplinas cadastradas')
         st.stop()
 
     return disciplina
