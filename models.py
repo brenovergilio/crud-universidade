@@ -1,9 +1,9 @@
 from peewee import *
-from datetime import date
+import datetime
 from os import remove
 from os.path import isfile
 
-db = PostgresqlDatabase('universidade',host='localhost',user='postgres',password='postgres')
+db = PostgresqlDatabase('univ2',host='localhost',user='postgres',password='postgres')
 
 class BaseModel(Model):
 
@@ -90,51 +90,51 @@ class AlunoDisc(BaseModel):
         primary_key = CompositeKey('aluno', 'disciplina')
 
 class Log(BaseModel):
-    dataOperacao = DateField(default=date.today())
+    dataOperacao = DateTimeField(default=datetime.datetime.now)
     tipo = CharField(constraints=[Check("tipo in ('U', 'D')")])
 
     class Meta:
         primary_key = False
 
 class PessoaLog(Log):
-    rga_old = CharField()
-    cpf_old = CharField()
+    rga_old = CharField(null=True)
+    cpf_old = CharField(null=True)
 
-    rga_new = CharField()
-    cpf_new = CharField()
+    rga_new = CharField(null=True)
+    cpf_new = CharField(null=True)
 
 class ProfessorLog(Log):
-    rga_old = CharField()
+    rga_old = CharField(null=True)
 
-    rga_new = CharField()
+    rga_new = CharField(null=True)
 
 class AlunoLog(Log):
-    rga_old = CharField()
-    curso_old = CharField()
+    rga_old = CharField(null=True)
+    curso_old = CharField(null=True)
 
-    rga_new = CharField()
-    curso_new = CharField()
+    rga_new = CharField(null=True)
+    curso_new = CharField(null=True)
 
 class DisciplinaLog(Log):
-    cod_disciplina_old = CharField()
-    professor_old = CharField()
+    cod_disciplina_old = CharField(null=True)
+    professor_old = CharField(null=True)
 
-    cod_disciplina_new = CharField()
-    professor_new= CharField()
+    cod_disciplina_new = CharField(null=True)
+    professor_new= CharField(null=True)
 
 class CursoLog(Log):
-    cod_curso_old = CharField()
-    coordenador_old = CharField()
+    cod_curso_old = CharField(null=True)
+    coordenador_old = CharField(null=True)
 
-    cod_curso_new = CharField()
-    coordenador_new = CharField()
+    cod_curso_new = CharField(null=True)
+    coordenador_new = CharField(null=True)
 
 class AlunoDiscLog(Log):
-    aluno_old = CharField()
-    disciplina_old = CharField()
+    aluno_old = CharField(null=True)
+    disciplina_old = CharField(null=True)
     
-    aluno_new = CharField()
-    disciplina_new = CharField()
+    aluno_new = CharField(null=True)
+    disciplina_new = CharField(null=True)
 
 def create_tables(override = True):
     if override:
@@ -150,3 +150,8 @@ def create_tables(override = True):
 
 if __name__ == '__main__':
     create_tables()
+    '''
+    with open('triggers.sql', 'r') as trigger:
+        sql = trigger.read()
+
+    db.execute_sql(sql)'''

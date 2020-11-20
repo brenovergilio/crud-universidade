@@ -76,7 +76,7 @@ def alterar_professor():
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(prof.pessoa.pnome, prof.pessoa.unome, prof.pessoa.cpf, prof.pessoa.datanasc, prof.pessoa.sexo)
     titulo, salario = pega_dados_prof(prof.titulo, prof.salario)
-
+    rga = st.text_input('RGA',prof.pessoa)
     alterar = st.button('Alterar')
 
     if alterar:
@@ -84,25 +84,30 @@ def alterar_professor():
         valida_tamanho(cpf, 11, message='CPF deve ter 11 dígitos')
 
         pessoa = Pessoa.get_by_id(prof.pessoa)
-
-        pessoa.pnome = pnome
-        pessoa.unome = unome
-        pessoa.cpf = cpf
-        pessoa.datanasc = datanasc
-        pessoa.sexo = sexo
-
+        dados = {
+            Pessoa.pnome : pnome,
+            Pessoa.unome : unome,
+            Pessoa.cpf : cpf,
+            Pessoa.datanasc : datanasc,
+            Pessoa.sexo : sexo,
+            Pessoa.rga : rga
+        }
         try:
-            pessoa.save()
-
+            q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)
+            q.execute()
         except Exception as e:
             st.warning('Erro ao salvar. Verifique os dados inseridos')
             st.write(e)
             st.stop()
 
-        prof.titulo = titulo
-        prof.salario = salario
+        dados={
+            Professor.titulo : titulo,
+            Professor.salario : salario
+        }
+        
 
-        prof.save()
+        q = Professor.update(dados).where(Professor.pessoa==pessoa.rga)
+        q.execute()
 
         st.success('Registros alterados!')
 

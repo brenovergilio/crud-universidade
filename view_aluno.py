@@ -58,14 +58,15 @@ def inserir_aluno():
 def visualizar_aluno():
     st.title('Visualizar alunos')
 
-    dados_alunos = list(Pessoa.select(Pessoa.rga, Pessoa.cpf, (Pessoa.pnome + " " + Pessoa.unome).alias('nome'), Curso.nome.alias('nome do curso')).join(Aluno).join(Curso).order_by(Pessoa.pnome).dicts())
+    dados_alunos = list(Pessoa.select(Pessoa.rga, Pessoa.cpf, (Pessoa.pnome + " " + Pessoa.unome).alias('nome'), Curso.nome.alias('nome do curso'),Aluno.cr).join(Aluno).join(Curso).order_by(Pessoa.pnome).dicts())
 
     if len(dados_alunos) == 0:
         st.warning('Não existem alunos cadastrados')
         st.stop()
 
     df = pd.DataFrame(dados_alunos).set_index('rga')
-
+    df.round(2)
+    
     st.table(df)
 
 def alterar_aluno():
@@ -83,6 +84,7 @@ def alterar_aluno():
     
     curso_atual = aluno.select().join(Curso)
     cursos = Curso.select().order_by(Curso.cod_curso)
+
     index = -1
     for c in cursos:
         index += 1

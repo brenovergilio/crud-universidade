@@ -31,7 +31,7 @@ def pega_dados_prof(titulo='', salario=0.0):
     return titulo, salario  
 
 def pega_dados_curso(cod_curso='',prof_coord='',nome=''):
-    cod_curso = st.text_input('Código do curos', cod_curso)
+    cod_curso = st.text_input('Código do curso', cod_curso)
     prof_coord = seleciona_pessoa(Professor,'Coordenador do curso')
     nome = st.text_input('Nome do curso', nome)
 
