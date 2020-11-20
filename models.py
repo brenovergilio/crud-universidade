@@ -86,7 +86,7 @@ class AlunoDisc(BaseModel):
     nota1 = DecimalField()
     nota2 = DecimalField()
     nota3 = DecimalField()
-    frequencia = DecimalField()
+    frequencia = IntegerField()
 
     class Meta:
         primary_key = CompositeKey('aluno', 'disciplina')
@@ -148,7 +148,10 @@ def create_tables(override = True):
         Pessoa, Aluno, Professor, 
         Curso, Disciplina, AlunoDisc, 
         PessoaLog, AlunoLog, ProfessorLog,
-        CursoLog, DisciplinaLog, AlunoDiscLog])
+        CursoLog, DisciplinaLog, AlunoDiscLog])     
 
 if __name__ == '__main__':
     create_tables()
+    with open('triggers.sql', 'r') as trigger:
+        sql = trigger.read()
+        db.execute_sql(sql)
