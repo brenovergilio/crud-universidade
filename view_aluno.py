@@ -81,6 +81,13 @@ def alterar_aluno():
     st.title('Dados do aluno')
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(aluno.pessoa.pnome, aluno.pessoa.unome, aluno.pessoa.cpf, aluno.pessoa.datanasc, aluno.pessoa.sexo)
+
+    st.write('Gerar novo rga?')
+    novo_rga = st.button('Gerar!')
+    if novo_rga:
+        global rga
+        rga=gera_rga()
+        st.success('Novo rga será: ' + str(rga))
     
     curso_atual = aluno.select().join(Curso)
     cursos = Curso.select().order_by(Curso.cod_curso)
@@ -99,27 +106,31 @@ def alterar_aluno():
         valida_nome(pnome, unome)
         valida_tamanho(cpf, 11, message='CPF deve ter 11 dígitos')
 
-        rga = gera_rga(curso.cod_curso)
-
         pessoa = Pessoa.get_by_id(aluno.pessoa)
 
-        pessoa.pnome = pnome
-        pessoa.unome = unome
-        pessoa.cpf = cpf
-        pessoa.datanasc = datanasc
-        pessoa.sexo = sexo
-
+        dados={
+            Pessoa.rga : rga,
+            Pessoa.pnome : pnome,
+            Pessoa.unome : unome,
+            Pessoa.cpf : cpf,
+            Pessoa.datanasc : datanasc,
+            Pessoa.sexo : sexo
+        }
         try:
-            pessoa.save()
+            q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)
+            q.execute()
 
         except Exception as e:
             st.warning('Erro ao salvar. Verifique os dados inseridos')
             st.write(e)
             st.stop()
 
-        aluno.cod_curso = curso.cod_curso
+        dados={
+            Aluno.cod_curso : curso
+        }
 
-        aluno.save()
+        q = Aluno.update(dados).where(Aluno.pessoa==pessoa.rga)
+        q.execute()
 
         st.success('Registros alterados!')   
      
@@ -241,5 +252,5 @@ def desmatricular_aluno():
     desmatricular = st.button('Desmatricular')
 
     if desmatricular:
-        AlunoDisc.delete_by_id([aluno.pessoa, disciplina.cod_disciplina])
+        AlunoDisc.delete().where(AlunoDisc.rga_aluno==aluno.rga_aluno & AlunoDisc.cod_disciplina==disciplina.cod_disciplina)
         st.success('Aluno desmatriculado')

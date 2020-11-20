@@ -93,7 +93,7 @@ BEGIN
     ELSIF TG_OP = 'DELETE' THEN
         tipo:='D';
     END IF;
-    INSERT INTO alunodisc VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_disciplina,NEW.rga_aluno,NEW.cod_disciplina);
+    INSERT INTO alunodisclog VALUES (LOCALTIMESTAMP,tipo,OLD.rga_aluno,OLD.cod_disciplina,NEW.rga_aluno,NEW.cod_disciplina);
     RETURN NEW;            
 END;
 $$ LANGUAGE PLPGSQL;
@@ -106,8 +106,8 @@ CREATE OR REPLACE FUNCTION atualizacr() RETURNS TRIGGER AS $$
 DECLARE
     cofrend DECIMAL;
 BEGIN
-    cofrend := (SELECT ROUND(AVG(t.notas),2) FROM (SELECT (nota1+nota2+nota3)/3 as notas FROM alunodisc WHERE alunodisc.rga_aluno='202019063271') as t);
-    UPDATE aluno SET cr = cofrend WHERE rga_aluno=OLD.rga_aluno;
+    cofrend := (SELECT ROUND(AVG(t.notas),2) FROM (SELECT (nota1+nota2+nota3)/3 as notas FROM alunodisc WHERE alunodisc.rga_aluno=NEW.rga_aluno) as t);
+    UPDATE aluno SET cr = cofrend WHERE rga_aluno=NEW.rga_aluno;
     RETURN NEW;
 END;
 $$ LANGUAGE PLPGSQL;

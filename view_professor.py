@@ -75,8 +75,13 @@ def alterar_professor():
         st.stop()
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(prof.pessoa.pnome, prof.pessoa.unome, prof.pessoa.cpf, prof.pessoa.datanasc, prof.pessoa.sexo)
+    st.write('Deseja gerar um novo rga?')
+    novo_rga = st.button('Gerar!')
+    if novo_rga:
+        global rga
+        rga=gera_rga()
+        st.success('Novo rga será: ' + str(rga))
     titulo, salario = pega_dados_prof(prof.titulo, prof.salario)
-    rga = st.text_input('RGA',prof.pessoa)
     alterar = st.button('Alterar')
 
     if alterar:
@@ -85,12 +90,12 @@ def alterar_professor():
 
         pessoa = Pessoa.get_by_id(prof.pessoa)
         dados = {
+            Pessoa.rga : rga,
             Pessoa.pnome : pnome,
             Pessoa.unome : unome,
             Pessoa.cpf : cpf,
             Pessoa.datanasc : datanasc,
-            Pessoa.sexo : sexo,
-            Pessoa.rga : rga
+            Pessoa.sexo : sexo
         }
         try:
             q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)

@@ -6,7 +6,6 @@ from view_curso import *
 from view_disciplina import *
 
 def run():
-
     st.sidebar.title('CRUD Universidade')
     
 

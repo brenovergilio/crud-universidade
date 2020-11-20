@@ -150,8 +150,8 @@ def create_tables(override = True):
 
 if __name__ == '__main__':
     create_tables()
-    '''
+    
     with open('triggers.sql', 'r') as trigger:
         sql = trigger.read()
 
-    db.execute_sql(sql)'''
+    db.execute_sql(sql)

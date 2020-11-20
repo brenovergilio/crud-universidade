@@ -58,7 +58,6 @@ def visualizar_disciplina():
 
     st.table(df)        
 
-#######nao atualiza no BD
 def alterar_disciplina():
     st.title('Alterar disciplina')
 

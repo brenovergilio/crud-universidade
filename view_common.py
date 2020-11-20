@@ -59,7 +59,7 @@ def pega_dados_disciplina(cod_disciplina='', nome='', carga_horaria=34, rga_prof
 
     rga_prof = seleciona_pessoa(Professor,'Professor', index)
 
-    return cod_disciplina, nome, carga_horaria, rga_prof
+    return cod_disciplina, nome, carga_horaria, rga_prof        
 
 def gera_rga(cod_curso=None):
     ano = str(date.today().year)
@@ -194,16 +194,3 @@ def seleciona_disc_prof(professor: Professor, label: str):
         st.stop()
 
     return disciplina
-
-
-'''
-def seleciona_professor(label: str, index = 0):
-    pessoas = Professor.select(Pessoa, Professor).join(Pessoa).order_by(Pessoa.pnome)
-
-    return st.selectbox(label, pessoas, format_func=Professor.toString, index=index)
-
-def seleciona_aluno(label: str):
-    pessoas = Aluno.select(Pessoa, Aluno).join(Pessoa).order_by(Pessoa.pnome)
-
-    return st.selectbox(label, pessoas, format_func=Aluno.toString)
-'''

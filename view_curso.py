@@ -57,7 +57,6 @@ def visualizar_curso():
 
     st.table(df)
 
-###Problema no bd
 def alterar_curso():
     st.title('Alterar curso')
 
@@ -81,9 +80,12 @@ def alterar_curso():
 
         dados = {
             Curso.cod_curso: cod_curso,
-            Curso.rga_coord: prof_coord.pessoa.rga,
             Curso.nome: nome
         }
+
+        if curso.rga_coord == prof_coord:
+            coord = {Curso.rga_coord : prof_coord}
+            dados.update(coord)
 
         try:
             q = Curso.update(dados).where(Curso.cod_curso==curso.cod_curso)
