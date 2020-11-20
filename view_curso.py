@@ -56,11 +56,12 @@ def visualizar_curso():
     df = pd.DataFrame(cursos).set_index('cod_curso')
 
     st.table(df)
+
 ###Problema no bd
 def alterar_curso():
     st.title('Alterar curso')
 
-    curso = seleciona_entidade(Curso, Curso.nome, 'Curso')
+    curso: Curso = seleciona_entidade(Curso, Curso.nome, 'Curso')
 
     if curso is None:
         st.warning('Não existem cursos cadastrados')
@@ -73,20 +74,24 @@ def alterar_curso():
     if alterar:
         valida_nome(nome,)
         valida_tamanho(cod_curso,4,message='Código deve ter 4 dígitos')
-        valida_cod_curso(cod_curso)
+        
+        if not cod_curso.isdigit():
+            st.warning('Código do curso deve ser numérico')
+            st.stop()
 
-        curso = Curso.get_by_id(curso.cod_curso)
-
-        curso.cod_curso = cod_curso
-        curso.rga_coord = prof_coord.pessoa.rga
-        curso.nome = nome
+        dados = {
+            Curso.cod_curso: cod_curso,
+            Curso.rga_coord: prof_coord.pessoa.rga,
+            Curso.nome: nome
+        }
 
         try:
-            curso.save()
+            q = Curso.update(dados).where(Curso.cod_curso==curso.cod_curso)
+            q.execute()
         except Exception as e:
             st.warning('Erro ao salvar. Verifique os dados inseridos')
             st.write(e)
-            st.stop() 
+            st.stop()
 
         st.success('Registros alterados!')
 

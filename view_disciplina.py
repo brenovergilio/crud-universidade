@@ -78,13 +78,16 @@ def alterar_disciplina():
         valida_cod_disc(cod_disciplina)
         valida_carga_horaria(carga_horaria)
 
-        disciplina.cod_disciplina = cod_disciplina
-        disciplina.nome = nome
-        disciplina.carga_horaria = carga_horaria
-        disciplina.rga_prof = rga_prof
+        dados = {
+            Disciplina.cod_disciplina: cod_disciplina,
+            Disciplina.nome: nome,
+            Disciplina.carga_horaria: carga_horaria,
+            Disciplina.rga_prof: rga_prof
+        }
 
         try:
-            disciplina.save()
+            q = Disciplina.update(dados).where(Disciplina.cod_disciplina==disciplina.cod_disciplina)
+            q.execute()
 
         except Exception as e:
             st.warning('Erro ao salvar. Verifique os dados inseridos')
