@@ -99,7 +99,7 @@ def alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salar
     }
     
 
-    q = Professor.update(dados).where(Professor.pessoa==pessoa.rga)
+    q = Professor.update(dados).where(Professor.pessoa==rga)
     q.execute()
 
     st.success('Registros alterados!')
@@ -125,10 +125,11 @@ def alterar_professor():
 
     if novo_rga:
         rga = gera_rga()
-        st.success('Novo rga será: ' + str(rga))
         alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salario, rga, prof)
+        st.success('Novo rga será: ' + str(rga))
 
     if alterar:
+        print(titulo, salario)
         alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salario, rga, prof)
 
 def remover_professor():

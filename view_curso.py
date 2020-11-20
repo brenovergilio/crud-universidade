@@ -22,7 +22,7 @@ def inserir_curso():
     cod_curso, prof_coord, nome = pega_dados_curso()
 
     if prof_coord is None:
-        st.warning('O curso deve ter um coordenador')
+        st.warning('Não existem professores cadastrados')
         st.stop()
 
     salvar = st.button('Salvar curso')

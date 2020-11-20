@@ -22,7 +22,7 @@ def inserir_disciplina():
     cod_disciplina, nome, carga_horaria, rga_prof = pega_dados_disciplina()
 
     if rga_prof is None:
-        st.warning('A disciplina deve ter um professor')
+        st.warning('Não existem professores cadastrados')
         st.stop()
 
     salvar = st.button('Salvar disciplina')

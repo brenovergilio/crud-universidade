@@ -24,8 +24,10 @@ def pega_dados_pessoa(pnome = '', unome='', cpf='', datanasc=None, sexo=None):
     
     return pnome, unome, cpf, datanasc, sexo
 
-def pega_dados_prof(titulo='', salario=0.0):
+def pega_dados_prof(titulo='', salario=8000.0):
     titulos = ["Graduado","Pós-Graduado","Mestrado", "Doutorado","Pós-Doutorado"]
+    
+    index = 0
     if titulo != '':
         index = titulos.index(titulo)
     
