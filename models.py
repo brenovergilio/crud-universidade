@@ -3,9 +3,7 @@ from datetime import date
 from os import remove
 from os.path import isfile
 
-db = SqliteDatabase('universidade.db', pragmas= {
-    'foreign_keys': 1
-})
+db = PostgresqlDatabase('universidade',host='localhost',user='postgres',password='postgres')
 
 class BaseModel(Model):
 
@@ -22,7 +20,7 @@ class Pessoa(BaseModel):
     unome = CharField(20)
     cpf = CharField(11, unique=True)
     datanasc = DateField()
-    sexo = CharField(1, constraints=[Check('sexo in ("M","F")')])
+    sexo = CharField(1, constraints=[Check("sexo in ('M','F')")])
 
     def toString(pessoa):
         return f'{pessoa.pnome} {pessoa.unome} | {pessoa.rga}'
@@ -32,7 +30,7 @@ class Professor(BaseModel):
     primary_key = True, db_column='rga_prof', 
     on_delete='CASCADE',on_update='CASCADE')
 
-    titulo = CharField(15, constraints=[Check('titulo in ("Graduado","Pós-Graduado","Mestrado", "Doutorado","Pós-Doutorado")')])
+    titulo = CharField(15, constraints=[Check("titulo in ('Graduado','Pós-Graduado','Mestrado', 'Doutorado','Pós-Doutorado')")])
     salario = DecimalField()
 
     def toString(professor):
@@ -86,14 +84,14 @@ class AlunoDisc(BaseModel):
     nota1 = DecimalField()
     nota2 = DecimalField()
     nota3 = DecimalField()
-    frequencia = IntegerField()
+    frequencia = DecimalField()
 
     class Meta:
         primary_key = CompositeKey('aluno', 'disciplina')
 
 class Log(BaseModel):
     dataOperacao = DateField(default=date.today())
-    tipo = CharField(constraints=[Check('tipo in ("U", "D")')])
+    tipo = CharField(constraints=[Check("tipo in ('U', 'D')")])
 
     class Meta:
         primary_key = False
@@ -148,10 +146,7 @@ def create_tables(override = True):
         Pessoa, Aluno, Professor, 
         Curso, Disciplina, AlunoDisc, 
         PessoaLog, AlunoLog, ProfessorLog,
-        CursoLog, DisciplinaLog, AlunoDiscLog])     
+        CursoLog, DisciplinaLog, AlunoDiscLog])
 
 if __name__ == '__main__':
     create_tables()
-    with open('triggers.sql', 'r') as trigger:
-        sql = trigger.read()
-        db.execute_sql(sql)
