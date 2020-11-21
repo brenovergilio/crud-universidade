@@ -107,7 +107,7 @@ def alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salar
 def alterar_professor():
     st.title('Alterar professor')
 
-    prof = seleciona_pessoa(Professor,'Professor')
+    prof: Professor = seleciona_pessoa(Professor,'Professor')
 
     if prof is None:
         st.warning('Não existem professores cadastrados')

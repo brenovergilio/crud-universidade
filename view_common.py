@@ -38,7 +38,8 @@ def pega_dados_prof(titulo='', salario=8000.0):
 
 def pega_dados_curso(cod_curso='',prof_coord='',nome=''):
     cod_curso = st.text_input('Código do curso', cod_curso)
-    prof_coord = seleciona_pessoa(Professor,'Coordenador do curso')
+    profs = Professor.select().where(Professor.pessoa.not_in(Curso.select(Curso.rga_coord)))
+    prof_coord = st.selectbox('Selecione o professor', profs, format_func=Professor.toString)
     nome = st.text_input('Nome do curso', nome)
 
     return cod_curso, prof_coord, nome

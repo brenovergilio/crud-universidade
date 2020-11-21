@@ -69,10 +69,48 @@ def visualizar_aluno():
     
     st.table(df)
 
+def alterar_instancia_aluno(pnome, unome, cpf, datanasc, sexo, rga, curso, aluno):
+    valida_nome(pnome, unome)
+    valida_tamanho(cpf, 11, message='CPF deve ter 11 dígitos')
+
+    cpfs = Pessoa.select(Pessoa.cpf).where(Pessoa.cpf != aluno.pessoa.cpf)
+    cpfs = [p.cpf for p in cpfs]
+    if cpf in cpfs:
+        st.warning('Esse CPF já existe no banco de dados.')
+        st.stop()
+
+    pessoa = Pessoa.get_by_id(aluno.pessoa)
+
+    dados={
+        Pessoa.rga : rga,
+        Pessoa.pnome : pnome,
+        Pessoa.unome : unome,
+        Pessoa.cpf : cpf,
+        Pessoa.datanasc : datanasc,
+        Pessoa.sexo : sexo
+    }
+    try:
+        q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)
+        q.execute()
+
+    except Exception as e:
+        st.warning('Erro ao salvar. Verifique os dados inseridos')
+        st.write(e)
+        st.stop()
+
+    dados={
+        Aluno.cod_curso : curso.cod_curso
+    }
+
+    q = Aluno.update(dados).where(Aluno.pessoa==rga)
+    q.execute()
+
+    st.success('Registros alterados!')
+
 def alterar_aluno():
     st.title('Alterar aluno')
 
-    aluno = seleciona_pessoa(Aluno,'Aluno')
+    aluno: Aluno = seleciona_pessoa(Aluno,'Aluno')
 
     if aluno is None:
         st.warning('Não existem alunos cadastrados')
@@ -82,57 +120,26 @@ def alterar_aluno():
 
     pnome, unome, cpf, datanasc, sexo = pega_dados_pessoa(aluno.pessoa.pnome, aluno.pessoa.unome, aluno.pessoa.cpf, aluno.pessoa.datanasc, aluno.pessoa.sexo)
 
-    st.write('Gerar novo rga?')
-    novo_rga = st.button('Gerar!')
-    if novo_rga:
-        global rga
-        rga=gera_rga()
-        st.success('Novo rga será: ' + str(rga))
+    rga = aluno.pessoa
     
-    curso_atual = aluno.select().join(Curso)
-    cursos = Curso.select().order_by(Curso.cod_curso)
+    cursos = Curso.select()
 
-    index = -1
-    for c in cursos:
-        index += 1
-        if c == curso_atual:
-            break
+    index = list(cursos).index(aluno.cod_curso)
    
     curso = st.selectbox('Curso', cursos, format_func=Curso.toString, index=index)
 
-    alterar = st.button('Alterar')
+    col1, col2 = st.beta_columns(2)
+
+    novo_rga = col2.button('Alterar com novo RGA.')
+    alterar = col1.button('Alterar.')
+    
+    if novo_rga:
+        rga=gera_rga()
+        alterar_instancia_aluno(pnome, unome, cpf, datanasc, sexo, rga, curso, aluno)
+        st.success('Novo rga será: ' + str(rga))
 
     if alterar:
-        valida_nome(pnome, unome)
-        valida_tamanho(cpf, 11, message='CPF deve ter 11 dígitos')
-
-        pessoa = Pessoa.get_by_id(aluno.pessoa)
-
-        dados={
-            Pessoa.rga : rga,
-            Pessoa.pnome : pnome,
-            Pessoa.unome : unome,
-            Pessoa.cpf : cpf,
-            Pessoa.datanasc : datanasc,
-            Pessoa.sexo : sexo
-        }
-        try:
-            q = Pessoa.update(dados).where(Pessoa.rga==pessoa.rga)
-            q.execute()
-
-        except Exception as e:
-            st.warning('Erro ao salvar. Verifique os dados inseridos')
-            st.write(e)
-            st.stop()
-
-        dados={
-            Aluno.cod_curso : curso
-        }
-
-        q = Aluno.update(dados).where(Aluno.pessoa==pessoa.rga)
-        q.execute()
-
-        st.success('Registros alterados!')   
+        alterar_instancia_aluno(pnome, unome, cpf, datanasc, sexo, rga, curso, aluno)
      
 def remover_aluno():
     aluno = seleciona_pessoa(Aluno,'Aluno')
