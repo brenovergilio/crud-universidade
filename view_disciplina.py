@@ -48,7 +48,7 @@ def inserir_disciplina():
 def visualizar_disciplina():
     st.title('Visualizar disciplinas')
 
-    disciplinas = list(Disciplina.select(Disciplina.cod_disciplina, Disciplina.nome.alias('nome da disciplina'), Pessoa.rga.alias('rga do professor'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do professor')).join(Pessoa,on=(Disciplina.rga_prof==Pessoa.rga)).order_by(Disciplina.cod_disciplina).dicts())
+    disciplinas = list(Disciplina.select(Disciplina.cod_disciplina, Disciplina.nome.alias('nome da disciplina'), Disciplina.carga_horaria.alias('carga horária'), Pessoa.rga.alias('rga do professor'), (Pessoa.pnome + " " + Pessoa.unome).alias('nome do professor')).join(Pessoa,on=(Disciplina.rga_prof==Pessoa.rga)).order_by(Disciplina.cod_disciplina).dicts())
 
     if len(disciplinas) == 0:
         st.warning('Não existem disciplinas cadastradas')
@@ -67,22 +67,36 @@ def alterar_disciplina():
         st.warning('Não existem disciplinas cadastradas')
         st.stop()
 
-    cod_disciplina, nome, carga_horaria, rga_prof = pega_dados_disciplina(cod_disciplina=disciplina.cod_disciplina,nome=disciplina.nome,carga_horaria=disciplina.carga_horaria,rga_prof=disciplina.rga_prof)
+    cod_disciplina, nome, carga_horaria, rga_prof = pega_dados_disciplina(cod_disciplina=disciplina.cod_disciplina,nome=disciplina.nome,carga_horaria=disciplina.carga_horaria,prof=disciplina.rga_prof.pessoa)
 
     alterar = st.button('Alterar')
 
     if alterar:
         valida_tamanho_minmax(dado=cod_disciplina, min=4, max=8, message='Código precisa ter entre 4 e 8 caracteres')
         valida_tamanho_minmax(dado=nome, min=4, max=40, message='Nome precisa ter entre 4 e 40 caracteres')
-        valida_cod_disc(cod_disciplina)
         valida_carga_horaria(carga_horaria)
 
-        dados = {
-            Disciplina.cod_disciplina: cod_disciplina,
-            Disciplina.nome: nome,
-            Disciplina.carga_horaria: carga_horaria,
-            Disciplina.rga_prof: rga_prof
-        }
+        if cod_disciplina != disciplina.cod_disciplina:   
+
+            discs = Disciplina.select(Disciplina.cod_disciplina).where(Disciplina.cod_disciplina != disciplina.cod_disciplina)
+
+            if cod_disciplina in [d.cod_disciplina for d in discs]:
+                st.warning('Esse código já existe no banco de dados.')
+                st.stop()
+
+            dados = {
+                Disciplina.cod_disciplina: cod_disciplina,
+                Disciplina.nome: nome,
+                Disciplina.carga_horaria: carga_horaria,
+                Disciplina.rga_prof: rga_prof
+            }
+
+        else:
+            dados = {
+                Disciplina.nome: nome,
+                Disciplina.carga_horaria: carga_horaria,
+                Disciplina.rga_prof: rga_prof
+            }
 
         try:
             q = Disciplina.update(dados).where(Disciplina.cod_disciplina==disciplina.cod_disciplina)

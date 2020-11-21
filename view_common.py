@@ -1,3 +1,4 @@
+import enum
 import pandas as pd
 import streamlit as st
 from peewee import *
@@ -44,7 +45,7 @@ def pega_dados_curso(cod_curso='',prof_coord='',nome=''):
 
     return cod_curso, prof_coord, nome
 
-def pega_dados_disciplina(cod_disciplina='', nome='', carga_horaria=34, rga_prof=None):
+def pega_dados_disciplina(cod_disciplina='', nome='', carga_horaria=34, prof=None):
 
     cod_disciplina = st.text_input('Código da disciplina', cod_disciplina)
 
@@ -52,19 +53,19 @@ def pega_dados_disciplina(cod_disciplina='', nome='', carga_horaria=34, rga_prof
 
     carga_horaria = st.number_input('Carga horária', min_value=34, value=carga_horaria)
 
-    if rga_prof is None:
+    profs = Professor.select(Professor, Pessoa).join(Pessoa)
+
+    if prof is None:
         index = 0
 
     else:
-        profs = Professor.select(Professor, Pessoa).join(Pessoa).order_by(Pessoa.pnome)
-
-        index = -1
-        for prof in profs:
-            index += 1
-            if rga_prof == prof.pessoa:
+        index = 0
+        for i, p in enumerate(profs):
+            if prof.rga == p.pessoa.rga:
+                index = i
                 break
 
-    rga_prof = seleciona_pessoa(Professor,'Professor', index)
+    rga_prof = st.selectbox('Professor', profs, index, Professor.toString)
 
     return cod_disciplina, nome, carga_horaria, rga_prof        
 
