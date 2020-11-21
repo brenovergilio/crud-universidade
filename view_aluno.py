@@ -65,7 +65,7 @@ def visualizar_aluno():
         st.stop()
 
     df = pd.DataFrame(dados_alunos).set_index('rga')
-    df.round(2)
+    df.round(3)
     
     st.table(df)
 
@@ -259,5 +259,6 @@ def desmatricular_aluno():
     desmatricular = st.button('Desmatricular')
 
     if desmatricular:
-        AlunoDisc.delete().where(AlunoDisc.rga_aluno==aluno.rga_aluno & AlunoDisc.cod_disciplina==disciplina.cod_disciplina)
+        q = AlunoDisc.delete().where((AlunoDisc.rga_aluno==aluno.rga_aluno) & (AlunoDisc.cod_disciplina==disciplina.cod_disciplina))
+        q.execute()
         st.success('Aluno desmatriculado')
