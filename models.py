@@ -84,7 +84,7 @@ class AlunoDisc(BaseModel):
     nota1 = DecimalField()
     nota2 = DecimalField()
     nota3 = DecimalField()
-    frequencia = DecimalField()
+    frequencia = IntegerField()
 
     class Meta:
         primary_key = CompositeKey('aluno', 'disciplina')

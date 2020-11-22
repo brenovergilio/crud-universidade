@@ -31,7 +31,6 @@ def inserir_disciplina():
         valida_tamanho_minmax(dado=cod_disciplina, min=4, max=8, message='Código precisa ter entre 4 e 8 caracteres')
         valida_tamanho_minmax(dado=nome, min=4, max=40, message='Nome precisa ter entre 4 e 40 caracteres')
         valida_cod_disc(cod_disciplina)
-        valida_carga_horaria(carga_horaria)
 
         disciplina = Disciplina(cod_disciplina=cod_disciplina,nome=nome,carga_horaria=carga_horaria,rga_prof=rga_prof.pessoa.rga)
 
@@ -74,7 +73,7 @@ def alterar_disciplina():
     if alterar:
         valida_tamanho_minmax(dado=cod_disciplina, min=4, max=8, message='Código precisa ter entre 4 e 8 caracteres')
         valida_tamanho_minmax(dado=nome, min=4, max=40, message='Nome precisa ter entre 4 e 40 caracteres')
-        valida_carga_horaria(carga_horaria)
+       
 
         if cod_disciplina != disciplina.cod_disciplina:   
 

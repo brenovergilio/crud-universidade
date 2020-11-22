@@ -129,7 +129,6 @@ def alterar_professor():
         st.success('Novo rga será: ' + str(rga))
 
     if alterar:
-        print(titulo, salario)
         alterar_instancia_professor(pnome, unome, cpf, sexo, datanasc, titulo, salario, rga, prof)
 
 def remover_professor():
@@ -149,7 +148,6 @@ def remover_professor():
 
     if remover:
         q = Pessoa.delete().where(Pessoa.rga==prof.pessoa)
-        print(q)
         q.execute()
 
         st.success('Professor removido com sucesso!')

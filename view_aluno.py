@@ -134,7 +134,7 @@ def alterar_aluno():
     alterar = col1.button('Alterar.')
     
     if novo_rga:
-        rga=gera_rga()
+        rga=gera_rga(curso.cod_curso)
         alterar_instancia_aluno(pnome, unome, cpf, datanasc, sexo, rga, curso, aluno)
         st.success('Novo rga será: ' + str(rga))
 

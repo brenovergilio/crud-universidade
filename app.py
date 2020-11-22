@@ -22,9 +22,5 @@ def run():
 
     sections[section]()
 
-    limpar_campos = st.sidebar.button('Limpar campos')
-    if limpar_campos:
-        clear_cache()
-
 if __name__ == '__main__':
     run()

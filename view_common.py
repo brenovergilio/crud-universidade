@@ -39,8 +39,19 @@ def pega_dados_prof(titulo='', salario=8000.0):
 
 def pega_dados_curso(cod_curso='',prof_coord='',nome=''):
     cod_curso = st.text_input('Código do curso', cod_curso)
-    profs = Professor.select().where(Professor.pessoa.not_in(Curso.select(Curso.rga_coord)))
-    prof_coord = st.selectbox('Selecione o professor', profs, format_func=Professor.toString)
+    profs = Professor.select(Professor, Pessoa).join(Pessoa)
+    print()
+    if prof_coord=='':
+        index = 0
+    
+    else:
+        index = 0
+        for i, p in enumerate(profs):
+            if prof_coord.rga_prof == p.pessoa.rga:
+                index = i
+                break
+
+    prof_coord = st.selectbox('Selecione o professor', profs, index=index, format_func=Professor.toString)
     nome = st.text_input('Nome do curso', nome)
 
     return cod_curso, prof_coord, nome
@@ -65,7 +76,7 @@ def pega_dados_disciplina(cod_disciplina='', nome='', carga_horaria=34, prof=Non
                 index = i
                 break
 
-    rga_prof = st.selectbox('Professor', profs, index, Professor.toString)
+    rga_prof = st.selectbox('Professor', profs, index, format_func=Professor.toString)
 
     return cod_disciplina, nome, carga_horaria, rga_prof        
 
@@ -156,10 +167,6 @@ def valida_cod_disc(codigo):
             st.warning('Este código já existe no banco de dados.')
             st.stop()
 
-def valida_carga_horaria(carga_horaria):
-    if carga_horaria < 34:
-        st.warning('Carga horária mínima é de 34 horas.')
-        st.stop()
 
 def valida_aluno_disc(aluno: BaseModel, disciplina: BaseModel):
     alunos_disciplina = list(Disciplina.select(AlunoDisc.rga_aluno, AlunoDisc.cod_disciplina).join(AlunoDisc, on=(Disciplina.cod_disciplina == AlunoDisc.cod_disciplina)).where(disciplina.cod_disciplina==AlunoDisc.cod_disciplina).dicts())
